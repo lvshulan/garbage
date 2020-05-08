@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.collect.project.baseinfo.mapper.IGarPriceMapper">
+
+	<resultMap type="GarPrice" id="GarPriceResult">
+		<id     property="priceId"     	column="price_id"   />
+		<result property="garName"   	column="gar_name"   />
+		<result property="garType"   	column="gar_type"   />
+		<result property="unitPrice"	column="unit_price"	/>
+		<result property="unit"			column="unit"	/>
+		<result property="status"     	column="status"      />
+		<result property="createBy"   	column="create_by"   />
+		<result property="createTime" 	column="create_time" />
+		<result property="updateBy"   	column="update_by"   />
+		<result property="updateTime" 	column="update_time" />
+		<result property="remark"       column="remark"       />
+	</resultMap>
+	
+	<sql id="selectGarPriceVo">
+        select price_id, gar_type, gar_name, unit_price, unit,status, create_by, create_time, remark 
+		from base_gar_price
+    </sql>
+
+	<select id="selectGarPriceList" parameterType="GarPrice" resultMap="GarPriceResult">
+	    <include refid="selectGarPriceVo"/>
+		<where>
+			<if test="garName != null and garName != ''">
+				and gar_name = #{garName}
+			</if>
+			<if test="garType != null and garType != ''">
+				and gar_type = #{garType}
+			</if>
+			<if test="status != null and status != ''">
+				and status = #{status}
+			</if>
+			<if test="unit != null and unit != ''">
+				and unit = #{unit}
+			</if>
+			<if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+				and date_format(create_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
+			</if>
+			<if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+				and date_format(create_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
+			</if>
+	    </where>
+	</select>
+	
+	<select id="selectGarPriceById" parameterType="Long" resultMap="GarPriceResult">
+		<include refid="selectGarPriceVo"/>
+		where price_id = #{priceId}
+	</select>
+	
+	<select id="selectGarPriceByGarName" parameterType="String" resultMap="GarPriceResult">
+		<include refid="selectGarPriceVo"/>
+		where gar_name = #{garName}
+	</select>
+	
+	<select id="checkGarNameUnique" parameterType="String" resultMap="GarPriceResult">
+		<include refid="selectGarPriceVo"/>
+		where gar_name = #{garName}
+	</select>
+	
+	<delete id="deleteGarPriceByIds" parameterType="Long">
+ 		delete from base_gar_price where price_id in
+ 		<foreach collection="array" item="priceId" open="(" separator="," close=")">
+ 			#{priceId}
+        </foreach> 
+ 	</delete>
+
+ 	<update id="updateGarPrice" parameterType="GarPrice">
+ 		update base_gar_price
+ 		<set>
+ 			<if test="garName != null and garName != ''">gar_name = #{garName},</if>
+ 			<if test="garType != null and garType != ''">gar_type = #{garType},</if>
+ 			<if test="unitPrice != null and unitPrice != ''">unit_price = #{unitPrice},</if>
+ 			<if test="unit != null and unitPrice != ''">unit = #{unit},</if>
+ 			<if test="status != null and status != ''">status = #{status},</if>
+ 			<if test="remark != null ">remark = #{remark},</if>
+ 			<if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+ 			update_time = sysdate()
+ 		</set>
+ 		where price_id = #{priceId}
+	</update>
+ 	
+ 	<insert id="insertGarPrice" parameterType="GarPrice">
+ 		insert into base_gar_price(
+ 			<if test="garName != null and garName != ''">gar_name,</if>
+ 			<if test="garType != null and garType != ''">gar_type,</if>
+ 			<if test="unitPrice != null and unitPrice != ''">unit_price,</if>
+ 			<if test="unit != null and unitPrice != ''">unit,</if>
+ 			<if test="status != null and status != ''">status,</if>
+ 			<if test="remark != null">remark,</if>
+ 			<if test="createBy != null and createBy != ''">create_by,</if>
+ 			create_time
+ 		)values(
+ 			<if test="garName != null and garName != ''">#{garName},</if>
+ 			<if test="garType != null and garType != ''">#{garType},</if>
+ 			<if test="unitPrice != null and unitPrice != ''">#{unitPrice},</if>
+ 			<if test="unit != null and unitPrice != ''">#{unit},</if>
+ 			<if test="status != null and status != ''">#{status},</if>
+ 			<if test="remark != null">#{remark},</if>
+ 			<if test="createBy != null and createBy != ''">#{createBy},</if>
+ 			sysdate()
+ 		)
+	</insert>
+	
+</mapper> 

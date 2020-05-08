@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.2.5.RELEASE</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
+	<groupId>com.collect</groupId>
+	<artifactId>garbage-collection</artifactId>
+	<version>0.0.1</version>
+	<name>garbage-collection</name>
+	<description>垃圾回收平台</description>
+
+	<properties>
+		<java.version>1.8</java.version>
+	</properties>
+
+	<dependencies>
+		<!-- SpringBoot Web容器 -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-devtools -->
+		<dependency>
+    		<groupId>org.springframework.boot</groupId>
+    		<artifactId>spring-boot-devtools</artifactId>
+    		<version>2.1.7.RELEASE</version>
+    		<optional>true</optional> <!-- 表示依赖不会传递 -->
+		</dependency>
+		
+		<!-- SpringBoot集成mybatis框架 -->
+		<dependency>
+			<groupId>org.mybatis.spring.boot</groupId>
+			<artifactId>mybatis-spring-boot-starter</artifactId>
+			<version>2.1.2</version>
+		</dependency>
+		
+		<!-- SpringBoot集成thymeleaf模板 -->
+		<dependency>
+   		 	<groupId>org.springframework.boot</groupId>
+    		<artifactId>spring-boot-starter-thymeleaf</artifactId>
+    		<version>2.2.6.RELEASE</version>
+		</dependency>	
+		
+		<!-- SpringBoot 测试 -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.junit.vintage</groupId>
+					<artifactId>junit-vintage-engine</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<!-- Mysql驱动包 -->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<optional>true</optional>
+		</dependency>
+		
+		<!--Shiro核心框架 -->
+		<dependency>
+    		<groupId>org.apache.shiro</groupId>
+    		<artifactId>shiro-core</artifactId>
+    		<version>1.5.2</version>
+		</dependency>
+						
+		<!-- https://mvnrepository.com/artifact/org.apache.shiro/shiro-web -->
+		<dependency>
+    		<groupId>org.apache.shiro</groupId>
+    		<artifactId>shiro-web</artifactId>
+    		<version>1.4.2</version>
+		</dependency>
+		
+		<!-- Shiro使用Spring框架 -->
+		<dependency>
+    		<groupId>org.apache.shiro</groupId>
+    		<artifactId>shiro-spring</artifactId>
+    		<version>1.5.2</version>
+		</dependency>		
+		
+		<!-- Shiro使用EhCache缓存框架 -->
+		<dependency>
+    		<groupId>org.apache.shiro</groupId>
+    		<artifactId>shiro-ehcache</artifactId>
+    		<version>1.5.2</version>
+		</dependency>
+		
+		<!-- thymeleaf模板引擎和shiro框架的整合 -->
+		<dependency>
+    		<groupId>com.github.theborakompanioni</groupId>
+    		<artifactId>thymeleaf-extras-shiro</artifactId>
+    		<version>2.0.0</version>
+		</dependency>		
+		
+		<!-- pagehelper 分页插件 -->
+		<dependency>
+		    <groupId>com.github.pagehelper</groupId>
+		    <artifactId>pagehelper-spring-boot-starter</artifactId>
+		    <version>1.2.13</version>
+		</dependency>
+		
+		<!--常用工具类 --> 
+		<dependency>
+    		<groupId>org.apache.commons</groupId>
+    		<artifactId>commons-lang3</artifactId>
+    		<version>3.10</version>
+		</dependency>
+
+		<!-- excel工具 -->
+		<dependency>
+    		<groupId>org.apache.poi</groupId>
+    		<artifactId>poi-ooxml</artifactId>
+    		<version>3.17</version>
+		</dependency>
+		
+		<dependency>
+    		<groupId>org.apache.poi</groupId>
+   			<artifactId>poi</artifactId>
+    		<version>3.17</version>
+		</dependency>
+		
+		<!--验证码 -->
+		<dependency>
+    		<groupId>com.github.penggle</groupId>
+    		<artifactId>kaptcha</artifactId>
+    		<version>2.3.2</version>
+    		<exclusions>
+				<exclusion>
+					<artifactId>javax.servlet-api</artifactId>
+					<groupId>javax.servlet</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+	
+		<!-- io常用工具类 -->
+		<dependency>
+    		<groupId>commons-io</groupId>
+   	 		<artifactId>commons-io</artifactId>
+    		<version>2.6</version>
+		</dependency>
+		
+		<!-- 文件上传工具类 -->
+		<dependency>
+    		<groupId>commons-fileupload</groupId>
+    		<artifactId>commons-fileupload</artifactId>
+    		<version>1.4</version>
+		</dependency>
+		
+		<!-- 解析客户端操作系统、浏览器等 -->
+		<dependency>
+    		<groupId>eu.bitwalker</groupId>
+    		<artifactId>UserAgentUtils</artifactId>
+    		<version>1.21</version>
+		</dependency>
+			
+	</dependencies>
+	
+	
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<fork>true</fork> <!-- 如果没有该配置，devtools不会生效 -->
+				</configuration>			
+			</plugin>
+		</plugins>
+	</build>
+
+</project>

@@ -1,0 +1,60 @@
+package com.collect.project.system.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.GetMapping;
+
+import com.collect.common.config.Global;
+import com.collect.common.core.controller.BaseController;
+import com.collect.framework.util.ShiroUtils;
+import com.collect.project.system.model.Menu;
+import com.collect.project.system.model.User;
+import com.collect.project.system.service.IMenuService;
+
+/**
+ * 首页 业务处理
+ * 
+ * @author ruoyi
+ */
+@Controller
+public class IndexController extends BaseController {
+
+	 @Autowired
+	 private IMenuService menuService;
+
+    // 系统首页
+    @GetMapping("/index")
+    public String index(ModelMap mmap)
+    {
+        // 取身份信息
+        User user = ShiroUtils.getUser();
+        // 根据用户id取出菜单
+        List<Menu> menus = menuService.selectMenusByUser(user);
+        mmap.put("menus", menus);
+        mmap.put("user", user);
+        //mmap.put("sideTheme", configService.selectConfigByKey("sys.index.sideTheme"));
+        //mmap.put("skinName", configService.selectConfigByKey("sys.index.skinName"));
+        mmap.put("copyrightYear", Global.getCopyrightYear());
+        mmap.put("demoEnabled", Global.isDemoEnabled());
+        
+        return "index";
+    }
+
+    // 切换主题
+    @GetMapping("/system/switchSkin")
+    public String switchSkin(ModelMap mmap)
+    {
+        return "skin";
+    }
+
+    // 系统介绍
+    @GetMapping("/system/main")
+    public String main(ModelMap mmap)
+    {
+        mmap.put("version", Global.getVersion());
+        return "main";
+    }
+}

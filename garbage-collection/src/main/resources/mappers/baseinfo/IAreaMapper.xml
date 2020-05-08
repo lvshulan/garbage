@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.collect.project.baseinfo.mapper.IAreaMapper">
+
+	<resultMap type="Area" id="AreaResult">
+		<id     property="areaId"     	column="area_id"   />
+		<result property="areaName"   	column="area_name"   />
+	</resultMap>
+	
+	<resultMap id="AreaResultWithCity" type="Area" extends="AreaResult" >
+  		<association property="city"  resultMap="com.collect.project.baseinfo.mapper.ICityMapper" />
+  	</resultMap>
+	
+	<sql id="selectAreaVo">
+        select a.area_id, a.area_name, a.city_id, c.city_name
+        from base_area a
+        	left join base_city c on a.city_id = c.city_id
+    </sql>
+
+	<select id="selectAreaById" parameterType="Long" resultMap="AreaResult">
+		<include refid="selectAreaVo"/>
+		where c.area_id = #{areaId}
+	</select>
+	
+		<select id="selectAreaListByCityId"  resultMap="AreaResultWithCity">
+		<include refid="selectAreaVo"/>
+		where c.city_id = #{city.city_id}
+	</select>
+	
+	<select id="selectAreaByName" parameterType="String" resultMap="AreaResultWithCity">
+		<include refid="selectAreaVo"/>
+		where c.area_name = #{areaName}
+	</select>
+	
+	<select id="checkAreaNameUnique" parameterType="String" resultMap="AreaResultWithCity">
+		<include refid="selectAreaVo"/>
+		where c.area_name = #{areaName}
+	</select>
+	
+	<delete id="deleteAreaByIds" parameterType="Long">
+ 		delete from base_area where area_id in
+ 		<foreach collection="array" item="areaId" open="(" separator="," close=")">
+ 			#{areaId}
+        </foreach> 
+ 	</delete>
+
+ 	<update id="updateArea" parameterType="Area">
+ 		update base_area
+ 		<set>
+ 			<if test="areaName != null and areaName != ''">area_name = #{areaName},</if>
+ 		</set>
+ 		where area_id = #{areaId}
+	</update>
+ 	
+ 	<insert id="insertArea" parameterType="Area">
+ 		insert into base_area(
+ 			<if test="areaName != null and areaName != ''">area_name,</if>
+ 		)values(
+ 			<if test="areaName != null and areaName != ''">#{areaName},</if> 
+ 		)
+	</insert>
+	
+</mapper> 

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.collect.project.baseinfo.mapper.IProvinceMapper">
+
+	<resultMap type="Province" id="ProvinceResult">
+		<id     property="provinceId"     	column="province_id"   />
+		<result property="provinceName"   	column="province_name"   />
+	</resultMap>
+	
+	<sql id="selectProvinceVo">
+        select province_id, province_name from base_province
+    </sql>
+
+	<select id="selectProvinceById" parameterType="Long" resultMap="ProvinceResult">
+		<include refid="selectProvinceVo"/>
+		where province_id = #{provinceId}
+	</select>
+	
+	<select id="selectProvinceByName" parameterType="String" resultMap="ProvinceResult">
+		<include refid="selectProvinceVo"/>
+		where province_name = #{provinceName}
+	</select>
+	
+	<select id="checkProvinceNameUnique" parameterType="String" resultMap="ProvinceResult">
+		<include refid="selectProvinceVo"/>
+		where province_name = #{provinceName}
+	</select>
+	
+	<delete id="deleteProvinceByIds" parameterType="Long">
+ 		delete from base_province where province_id in
+ 		<foreach collection="array" item="provinceId" open="(" separator="," close=")">
+ 			#{provinceId}
+        </foreach> 
+ 	</delete>
+
+ 	<update id="updateProvince" parameterType="Province">
+ 		update base_province
+ 		<set>
+ 			<if test="provinceName != null and provinceName != ''">province_name = #{provinceName},</if>
+ 		</set>
+ 		where province_id = #{provinceId}
+	</update>
+ 	
+ 	<insert id="insertProvince" parameterType="Province">
+ 		insert into base_province(
+ 			<if test="provinceName != null and provinceName != ''">province_name,</if>
+ 		)values(
+ 			<if test="provinceName != null and provinceName != ''">#{provinceName},</if> 
+ 		)
+	</insert>
+	
+</mapper> 

@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.collect.project.baseinfo.mapper.IOrderMapper">
+
+	<resultMap type="Order" id="OrderResult">
+		<id     property="orderId"     		column="order_id"   />
+		<result property="userName"   		column="user_name"   />
+		<result property="phone"   			column="phone"   />
+		<result property="detailAddress"   	column="detail_address"   />
+		<result property="avatar"   		column="avatar"   />
+		<result property="serviceTime"   	column="service_time"   />
+		<result property="period"   		column="period"   />
+		<result property="createTime"   	column="create_time"   />
+		<result property="updateTime"   	column="update_time"   />
+		<result property="status"   		column="status"   />
+		<result property="amount"   		column="amount"   />
+		<result property="remark"   		column="remark"   />	
+	</resultMap>
+	
+	<resultMap id="OrderResultWith" type="Order" extends="OrderResult" >
+  		<association property="province"  resultMap="com.collect.project.baseinfo.mapper.IProvinceMapper" />
+  		<association property="city"  resultMap="com.collect.project.baseinfo.mapper.ICityMapper" />
+  		<association property="area"  resultMap="com.collect.project.baseinfo.mapper.IAreaMapper" />
+  		<association property="user"  resultMap="com.collect.project.system.mapper.IUserMapper" />
+  	</resultMap>
+	
+	<sql id="selectOrderContactVo">
+        select o.order_id, o.user_id, o.user_name,o.phone, o.detail_address, o.avatar, o.service_time, o.create_time, o.status, o.amount, o.remark,
+        p.province_id, p.province_name,
+        c.city_id, c.city_name,
+        a.area_id, a.area_name
+        from base_order o
+        	left join base_province p on o.province_id = p.province_id 
+        	left join base_city c on o.city_id = c.city_id 
+        	left join base_area a on o.area_id = a.area_id 
+        	left join sys_user u on o.user_id = u.user_id
+    </sql>
+    
+    <sql id="selectOrderContactVo">
+        select o.order_id, o.user_id, o.user_name,o.phone, o.detail_address, o.avatar, o.service_time, o.period, o.create_time, o.status, o.amount, o.remake 
+        from base_order o
+    </sql>
+
+	<select id="selectOrderList" parameterType="User" resultMap="OrderResultWith">
+		<include refid="selectOrderContactVo"/>
+		<where>
+		<if test="user.user_id != null and user.user_id != ''">
+			and o.user_id = # {user.user_id}
+		</if>
+		<if test="province.province_name != null and province.province_name != ''">
+			and p.province_name like concat('%', #{province.province_name}, '%')
+		</if>
+		<if test="city.city_name != null and city.city_name != ''">
+			and c.city_name like concat('%', #{city.city_name}, '%')
+		</if>
+		<if test="area.area_name != null and area.area_name != ''">
+			and a.area_name like concat('%', #{area.area_name}, '%')
+		</if>
+		<if test="status != null and status != ''">
+			and o.status = #{status}
+		</if>
+		<if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+			and date_format(o.service_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
+		</if>
+		<if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+			and date_format(o.service_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
+		</if>
+		<if test="period != null and period != ''">
+			and o.period = #{period}
+		</if>
+		<if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+			and date_format(o.create_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
+		</if>
+		<if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+			and date_format(o.create_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
+		</if>
+		</where>
+	</select>	
+
+	<select id="selectOrderListByProvinceId"  resultMap="OrderResultWith">
+		<include refid="selectOrderContactVo"/>
+		where o.province_id = #{province.province_id}
+	</select>
+	
+	<select id="selectOrderListByCityId"  resultMap="OrderResultWith">
+		<include refid="selectOrderContactVo"/>
+		where o.city_id = #{city.city_id}
+	</select>
+	
+	<select id="selectOrderListByAreaId"  resultMap="OrderResultWith">
+		<include refid="selectOrderContactVo"/>
+		where o.area_id = #{area.area_id}
+	</select>
+	
+	<select id="selectOrderListByUserId"  resultMap="OrderResultWith">
+		<include refid="selectOrderContactVo"/>
+		where o.user_id = #{user.user_id}
+	</select>
+
+	<select id="selectOrderById" parameterType="String" resultMap="OrderResult">
+		<include refid="selectOrderVo"/>
+		where o.order_id = #{orderId}
+	</select>
+
+	
+	<delete id="deleteOrderByIds" parameterType="String">
+ 		delete from base_order where order_id in
+ 		<foreach collection="array" item="orderId" open="(" separator="," close=")">
+ 			#{orderId}
+        </foreach> 
+ 	</delete>
+
+ 	<update id="updateOrder" parameterType="Order">
+ 		update base_order
+ 		<set>
+ 			<if test="userName != null and userName != ''">user_name,</if>
+ 			<if test="phone != null and phone != ''">phone,</if>
+ 			<if test="province.province_id != null and province.province_id != ''">province_id,</if>
+ 			<if test="city.city_id != null and city.city_id != ''">city_id,</if>
+ 			<if test="area.area_id != null and area.area_id != ''">area_id,</if>
+ 			<if test="detailAddress != null and detailAddress != ''">detail_address,</if>
+ 			<if test="avatar != null and avatar != ''">avatar,</if>
+ 			<if test="serviceTime != null and serviceTime != ''">service_time,</if>
+ 			<if test="period != null and period != ''">period,</if>
+ 			<if test="status != null and status != ''">status,</if>
+ 			<if test="amount != null and amount != ''">amount,</if>
+ 			<if test="remark != null and remark != ''">remark,</if>
+ 			update_time
+ 		</set>
+ 		where order_id = #{orderId} and status != '2'
+	</update>
+ 	
+ 	<insert id="insertOrder" parameterType="Order">
+ 		insert into base_order(
+ 			<if test="userName != null and userName != ''">user_name,</if>
+ 			<if test="phone != null and phone != ''">phone,</if>
+ 			<if test="province.province_id != null and province.province_id != ''">province_id,</if>
+ 			<if test="city.city_id != null and city.city_id != ''">city_id,</if>
+ 			<if test="area.area_id != null and area.area_id != ''">area_id,</if>
+ 			<if test="detailAddress != null and detailAddress != ''">detail_address,</if>
+ 			<if test="avatar != null and avatar != ''">avatar,</if>
+ 			<if test="serviceTime != null and serviceTime != ''">service_time,</if>
+ 			<if test="period != null and period != ''">period,</if>
+ 			<if test="status != null and status != ''">status,</if>
+ 			<if test="amount != null and amount != ''">amount,</if>
+ 			<if test="remark != null and remark != ''">remark,</if>
+ 			create_time
+ 		)values(
+ 			<if test="userName != null and userName != ''">#{userName},</if> 
+ 			<if test="phone != null and phone != ''">#{phone},</if>
+ 			<if test="province.province_id != null and province.province_id != ''">#{province.province_id},</if>
+ 			<if test="city.city_id != null and city.city_id != ''">#{city.city_id},</if>
+ 			<if test="area.area_id != null and area.area_id != ''">#{area.area_id},</if>
+ 			<if test="detailAddress != null and detailAddress != ''">#{detailAddress},</if>
+ 			<if test="avatar != null and avatar != ''">#{avatar},</if>
+ 			<if test="serviceTime != null and serviceTime != ''">#{serviceTime},</if>
+ 			<if test="period != null and period != ''">#{period},</if>
+ 			<if test="status != null and status != ''">#{status},</if>
+ 			<if test="amount != null and amount != ''">#{amount},</if>
+ 			<if test="remark != null and remark != ''">#{remark},</if>
+ 			sysdate()
+ 		)
+	</insert>
+	
+</mapper> 
